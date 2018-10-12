@@ -1,10 +1,10 @@
 .parallax_banner{
 
-	padding-top:200px;
-	background-image: url("../img/iot.png");
+	padding-top:100px;
+	background-image: url("../img/fundo.jpeg");
 
 	/* Altura do banner */
-	height: 600px;
+	height: 300px;
 
 	/* Create the parallax scrolling effect */
 	background-attachment: fixed;
@@ -19,7 +19,7 @@
     margin-right: auto;
 }
 body{
-	background-color: #b8b8b8;
+	background-color: #1a1919;
 }
 .tema1{
 	background-color: red;
