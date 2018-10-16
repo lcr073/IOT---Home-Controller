@@ -6,9 +6,14 @@
 
 		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 
+		<script type="text/javascript" src="farbtastic.js"></script>
+
+		<link rel="stylesheet" href="farbtastic.css" type="text/css" />		
+
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>			
+
 	</head>
 
 	<body>
@@ -72,18 +77,46 @@
 
 		
 											<h5 class="card-title">Controle Ambiente:</h5>
-											<p class="card-text" style="font-size: 8ex; text-align: center"><button>Intensidade</button><button>Cor</button></p>
+											<p class="card-text, slidecontainer" style="font-size: 8ex; text-align: center">
+												<p class="card-text" style="font-size: 2ex; text-align: center">Intensidade de iluminação:</p>
+													<input type="range" min="0" max="100" value="50" class="slider" id="intIlum">
+													<p class="card-text" style="font-size: 2ex; margin-top:5px; text-align: center"><span id="intensBri"> </span> %</p>
+											</p>
+
+											<p class="card-text, slidecontainer" style="font-size: 8ex; text-align: center">
+												<p class="card-text" style="font-size: 2ex; text-align: center">Matiz da iluminação:</p>
+														<form action="" style="width: 400px;">
+															<!-- 	<div class="form-item"><label for="color">Color:</label><input type="text" id="color" name="color" value="#123456" /></div> --><div id="picker"></div>
+														</form>
+													<p class="card-text" style="font-size: 2ex; margin-top:5px; text-align: center">30 %</p>
+											</p>
 									</div>
 								</div>
 							</div>
 						</center>
 					</div>
-					
-
+				
 
 			</div>
 			
 		</div>
+
+		<script type="text/javascript" charset="utf-8">
+			$(document).ready(function() {
+				$('#demo').hide();
+				$('#picker').farbtastic('#color');
+			});
+				</script>		
+
+		<script>
+			var slider = document.getElementById("intIlum");
+			var output = document.getElementById("intensBri");
+			output.innerHTML = slider.value;
+			
+			slider.oninput = function() {
+				output.innerHTML = this.value;
+			}
+			</script>
 	</body>
 
 </html>
