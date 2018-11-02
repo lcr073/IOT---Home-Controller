@@ -86,7 +86,8 @@
 											<p class="card-text, slidecontainer" style="font-size: 8ex; text-align: center">
 												<p class="card-text" style="font-size: 2ex; text-align: center">Matiz da iluminação:</p>
 														<form action="" style="width: 400px;">
-															<!-- 	<div class="form-item"><label for="color">Color:</label><input type="text" id="color" name="color" value="#123456" /></div> --><div id="picker"></div>
+																 <div class="form-item"><label for="color">Color:</label><input type="text" id="color" name="color" value="#123456" /></div> <div id="picker"></div>
+																 <button type="button" class="btn btn-primary" onclick="mudaCor()">Mudar Cor</button>
 														</form>
 													<p class="card-text" style="font-size: 2ex; margin-top:5px; text-align: center">30 %</p>
 											</p>
@@ -106,13 +107,51 @@
 				$('#demo').hide();
 				$('#picker').farbtastic('#color');
 			});
+
+			// Converte a cor de hexadecimal para RGB
+			function HEX2RGB (hex) {
+							"use strict";
+							if (hex.charAt(0) === '#') {
+									hex = hex.substr(1);
+							}
+							if ((hex.length < 2) || (hex.length > 6)) {
+									return false;
+							}
+							var values = hex.split(''),
+									r,
+									g,
+									b;
+
+							if (hex.length === 2) {
+									r = parseInt(values[0].toString() + values[1].toString(), 16);
+									g = r;
+									b = r;
+							} else if (hex.length === 3) {
+									r = parseInt(values[0].toString() + values[0].toString(), 16);
+									g = parseInt(values[1].toString() + values[1].toString(), 16);
+									b = parseInt(values[2].toString() + values[2].toString(), 16);
+							} else if (hex.length === 6) {
+									r = parseInt(values[0].toString() + values[1].toString(), 16);
+									g = parseInt(values[2].toString() + values[3].toString(), 16);
+									b = parseInt(values[4].toString() + values[5].toString(), 16);
+							} else {
+									return false;
+							}
+							return [r, g, b];
+					}
 				</script>		
 
 		<script>
 			var slider = document.getElementById("intIlum");
 			var output = document.getElementById("intensBri");
+			var corEscolhida = document.getElementById("color");
+
 			output.innerHTML = slider.value;
 			
+			function mudaCor(){
+				console.log(HEX2RGB(corEscolhida.value));
+			}
+
 			slider.oninput = function() {
 				output.innerHTML = this.value;
 			}
