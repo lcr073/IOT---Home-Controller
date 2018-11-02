@@ -61,6 +61,22 @@ class DHTThread(Thread):
 def index():
     return render_template('index.html')
 
+@app.route('/temperatura')
+def temperatura():
+    return render_template('temperatura.html')
+
+@app.route('/luminosidade')
+def luminosidade():
+    return render_template('luminosidade.html')
+
+@app.route('/ruidos_sonoros')
+def ruidos_sonoros():
+    return render_template('ruidos_sonoros.html')
+
+@app.route('/humidade')
+def humidade():
+    return render_template('humidade.html')
+
 @socketio.on('connect', namespace='/monitor')
 def connect():
     global dht_thread
