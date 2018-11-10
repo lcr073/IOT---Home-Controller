@@ -4,11 +4,106 @@
 
 		<link rel="stylesheet" href="{{url_for('static', filename='css/css.css')}}">		
 
+		<script type="text/javascript" src="static/js/socket.io.min.js"></script>	
+		
+		<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>		
+
 		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>			
+
+		<script type="text/javascript">
+			$(document).ready( function() {
+					var led_status;
+					var socket = io.connect('http://' + document.domain + ':' + location.port + '/monitor');
+					var numbers_received = [];
+
+					/////////////////////////////
+					//// Grafico humidade ////
+
+					var ultTemp = 0;					
+
+					var dpsTemp = []; // dataPoints
+					var chartTemp = new CanvasJS.Chart("chartContainer1", {
+						title :{
+							text: "Humidade"
+						},
+						axisY: {
+							includeZero: false
+						},      
+						data: [{
+							type: "line",
+							dataPoints: dpsTemp
+						}]
+					});
+
+
+					var xVal = 0;
+					var yVal = 100; 
+					var updateInterval = 1000;
+					var dataLength = 20; // number of dataPoints visible at any point
+
+					var updateChartTemp = function (count) {
+
+						count = count || 1;
+
+						for (var j = 0; j < count; j++) {
+							yVal = ultTemp;
+							dpsTemp.push({
+								x: xVal,
+								y: yVal
+							});
+							xVal++;
+						}
+
+						if (dpsTemp.length > dataLength) {
+							dpsTemp.shift();
+						}
+
+						chartTemp.render();
+					};
+
+					updateChartTemp(dataLength);
+					setInterval(function(){updateChartTemp()}, updateInterval);			
+
+					// ////////////// FIM GRAFICO TEMPERATURA ////////////////		
+	
+
+					socket.on('connect', function() {
+							console.log("Conectado");
+					});
+
+					socket.on('disconnect', function() {
+							console.log("Desconectado");
+					});            
+
+					// Atualiza informacao referente a umidade e temperatura
+					socket.on('dht_measure', function(data) {
+							if(data.success === true) {
+									$("#temp").html(data.temp);
+							} else {
+									$("#temp").html(NaN);
+							}
+					});
+
+
+// Debuguer
+		$('#btnExecutar').click(function(event) {
+			console.log("oi");
+				if(led_status === 'off') {
+						socket.emit('troca_cor_lcd',{ 'r' : 50, 'g' : 24, 'b' : 42});
+				} else {
+						socket.emit('troca_cor_lcd',{ 'r' : 50, 'g' : 24, 'b' : 42});
+				}
+		});
+		
+
+			}); 
+
+	</script>		
+
 	</head>
 
 	<body>
@@ -65,14 +160,19 @@
 									<div class="container">
 										<div class="row">
 											<div class="col-12 col-12 col-md-12 col-lg-12">
-													<h5 class="card-title">Temperatura atual:</h5>
-													<p class="card-text" style="font-size: 8ex; text-align: center">22 ºC</p>
+													<h5 class="card-title">Humidade atual:</h5>
+													<p class="card-text" style="font-size: 8ex; text-align: center"><span id="humid">0.0</span>&#37;</p>
 											</div>
 										</div>
 
 		
-											<h5 class="card-title">Controles:</h5>
-											<p class="card-text" style="font-size: 8ex; text-align: center"><button>1</button><button>2</button><button>3</button></p>
+											<!-- <h5 class="card-title">Controles:</h5> -->
+											<h5 class="card-title">Historico da Humidade:</h5>
+											<p class="card-text" style="font-size: 8ex; text-align: center">
+													<div id="chartContainer1" style="height: 300px; width: 100%;"></div>
+
+											</p>
+
 									</div>
 								</div>
 							</div>
