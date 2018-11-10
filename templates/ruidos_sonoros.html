@@ -21,9 +21,7 @@
 					var socket = io.connect('http://' + document.domain + ':' + location.port + '/monitor');
 					var numbers_received = [];
 
-					/////////////////////////////
-					//// Grafico temperatura ////
-
+					// Valor em y colocado no grafico
 					var ultTemp = 0;					
 
 					var dpsTemp = []; // dataPoints
@@ -45,32 +43,7 @@
 					var yVal = 100; 
 					var updateInterval = 1000;
 					var dataLength = 20; // number of dataPoints visible at any point
-
-					var updateChartTemp = function (count) {
-
-						count = count || 1;
-
-						for (var j = 0; j < count; j++) {
-							yVal = ultTemp;
-							dpsTemp.push({
-								x: xVal,
-								y: yVal
-							});
-							xVal++;
-						}
-
-						if (dpsTemp.length > dataLength) {
-							dpsTemp.shift();
-						}
-
-						chartTemp.render();
-					};
-
-					updateChartTemp(dataLength);
-					setInterval(function(){updateChartTemp()}, updateInterval);			
-
-					// ////////////// FIM GRAFICO TEMPERATURA ////////////////		
-	
+			
 
 					socket.on('connect', function() {
 							console.log("Conectado");
@@ -83,7 +56,41 @@
 					// Atualiza informacao referente a ruido sonoro
 					socket.on('sound_db_measure', function(data) {
 							if(data.success === true) {
-									$("#sound").html(data.sound);
+								$("#sound").html(data.sound);
+	
+								//////////////////////////////
+								//// Grafico temperatura ////
+
+								// Valor em y colocado no grafico
+								ultTemp = data.sound;
+						
+
+								var updateChartTemp = function (count) {
+			
+									count = count || 1;
+			
+									for (var j = 0; j < count; j++) {
+										yVal = ultTemp;
+										dpsTemp.push({
+											x: xVal,
+											y: yVal
+										});
+			
+										xVal++;
+									}
+			
+									if (dpsTemp.length > dataLength) {
+										dpsTemp.shift();
+									}
+			
+									chartTemp.render();
+								};
+			
+								updateChartTemp(dataLength);
+								setInterval(function(){updateChartTemp()}, updateInterval);			
+				
+								// ////////////// FIM GRAFICO TEMPERATURA ////////////////		
+
 							} else {
 									$("#sound").html(NaN);
 							}

@@ -11,8 +11,8 @@ from time import sleep
 from time import strftime
 from threading import Thread, Event
 import threading
-#import grovepi
-#from grovepi import *
+import grovepi
+from grovepi import *
 
 __author__ = 'OsTerriveis'
 
@@ -39,7 +39,7 @@ led_status = "off"
 #digitalWrite(led_port, 0)
 
 ######## INICIO LCD IMPORTS #######
-"""import time,sys
+import time,sys
 
 if sys.platform == 'uwp':
     import winrt_smbus as smbus
@@ -113,7 +113,7 @@ def setText_norefresh(text):
                 continue
         count += 1
         bus.write_byte_data(DISPLAY_TEXT_ADDR,0x40,ord(c))
-"""
+
 ##### FIM LCD IMPORTS ######
 
 class SoundThread(Thread):
@@ -126,7 +126,7 @@ class SoundThread(Thread):
             try:
                 # Obtendo dado sensor
                 # ler o nível do som
-               # sound_value = grovepi.analogRead(sound_sensor)
+                sound_value = grovepi.analogRead(sound_sensor)
                 # Agrupando os dados para enviar
                 data = {
                     'success': True,
@@ -153,7 +153,7 @@ class LDRThread(Thread):
             try:
                 # Obtendo dado sensor
                 # obter o valor do sensor de luz
-               # sensor_value = grovepi.analogRead(light_sensor)
+                sensor_value = grovepi.analogRead(light_sensor)
                 # calcular a resistência do sensor em Kohm
                 resistance = \
                 (float)(1023 - sensor_value) * 10 / sensor_value
@@ -237,19 +237,19 @@ def connect():
     if not dht_thread.isAlive():
         print("Starting Thread de humidade e temperatura")
         dht_thread = DHTThread()
-        #dht_thread.start()
+        dht_thread.start()
 
     # Iniciando thread de luminosidade
     if not ldr_thread.isAlive():
         print("Iniciando thread de luminosidade")
         ldr_thread = LDRThread()
-        #ldr_thread.start()
+        ldr_thread.start()
         
     # Iniciando thread de som
     if not sound_thread.isAlive():
         print("Iniciando Thread de detecao de ruidos")
         sound_thread = SoundThread()
-        #sound_thread.start()
+        sound_thread.start()
 
 @socketio.on('disconnect', namespace='/monitor')
 def disconnect():
@@ -258,7 +258,7 @@ def disconnect():
 @socketio.on('troca_cor_lcd', namespace='/monitor')
 def troca_cor(data):
     print(data['r'],data['g'],data['b'])
-    #setRGB(data['r'],data['g'],data['b'])
+    setRGB(data['r'],data['g'],data['b'])
     
 
 @socketio.on('led_command', namespace='/monitor')
@@ -281,7 +281,7 @@ def control_led(data):
 if __name__ == '__main__':
     try:
         print('Iniciando servidor na porta 5000.')
-        #setRGB(0,0,255)
+        setRGB(0,0,255)
         socketio.run(app, debug=False, host='0.0.0.0')
     finally:
         print('Desligando...')

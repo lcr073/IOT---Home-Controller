@@ -20,15 +20,13 @@
 					var socket = io.connect('http://' + document.domain + ':' + location.port + '/monitor');
 					var numbers_received = [];
 
-					/////////////////////////////
-					//// Grafico humidade ////
-
+					// Valor em y colocado no grafico
 					var ultTemp = 0;					
 
 					var dpsTemp = []; // dataPoints
 					var chartTemp = new CanvasJS.Chart("chartContainer1", {
 						title :{
-							text: "Humidade"
+							text: "Ruido Sonoro"
 						},
 						axisY: {
 							includeZero: false
@@ -44,33 +42,8 @@
 					var yVal = 100; 
 					var updateInterval = 1000;
 					var dataLength = 20; // number of dataPoints visible at any point
-
-					var updateChartTemp = function (count) {
-
-						count = count || 1;
-
-						for (var j = 0; j < count; j++) {
-							yVal = ultTemp;
-							dpsTemp.push({
-								x: xVal,
-								y: yVal
-							});
-							xVal++;
-						}
-
-						if (dpsTemp.length > dataLength) {
-							dpsTemp.shift();
-						}
-
-						chartTemp.render();
-					};
-
-					updateChartTemp(dataLength);
-					setInterval(function(){updateChartTemp()}, updateInterval);			
-
-					// ////////////// FIM GRAFICO TEMPERATURA ////////////////		
-	
-
+			
+		
 					socket.on('connect', function() {
 							console.log("Conectado");
 					});
@@ -82,7 +55,38 @@
 					// Atualiza informacao referente a umidade e temperatura
 					socket.on('dht_measure', function(data) {
 							if(data.success === true) {
-									$("#temp").html(data.temp);
+									$("#hum").html(data.hum);
+
+								//////////////////////////////
+								//// Grafico temperatura ////
+
+								// Valor em y colocado no grafico
+								ultTemp = data.hum;
+						
+
+								var updateChartTemp = function (count) {
+			
+									count = count || 1;
+			
+									for (var j = 0; j < count; j++) {
+										yVal = ultTemp;
+										dpsTemp.push({
+											x: xVal,
+											y: yVal
+										});
+			
+										xVal++;
+									}
+			
+									if (dpsTemp.length > dataLength) {
+										dpsTemp.shift();
+									}
+			
+									chartTemp.render();
+								};
+			
+								updateChartTemp(dataLength);
+								setInterval(function(){updateChartTemp()}, updateInterval);	
 							} else {
 									$("#temp").html(NaN);
 							}
@@ -161,7 +165,7 @@
 										<div class="row">
 											<div class="col-12 col-12 col-md-12 col-lg-12">
 													<h5 class="card-title">Humidade atual:</h5>
-													<p class="card-text" style="font-size: 8ex; text-align: center"><span id="humid">0.0</span>&#37;</p>
+													<p class="card-text" style="font-size: 8ex; text-align: center"><span id="hum">0.0</span>&#37;</p>
 											</div>
 										</div>
 
